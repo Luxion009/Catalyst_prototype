@@ -1,0 +1,23 @@
+plop
+g
+
+
+load c:\products\prototype\xfoil.foil
+
+
+oper
+re 67131.8
+mach 0
+visc 67131.8
+pacc
+xfoil_pwrt.dat
+
+iter 500
+alfa 3.38626
+dump xfoil_a03.386_dump.dat
+cpwr xfoil_a03.386_cpwr.dat
+pwrt
+xfoil_pwrt.dat
+
+
+quit
