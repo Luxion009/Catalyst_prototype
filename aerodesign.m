@@ -26,7 +26,7 @@ do
 		until(d_count>100)
 
 		d_count=1;
-		
+
 		%線素の端点のｚ座標を求める（原点なし）
 		do
 			line_e(d_count,2)=alpha*((line_e(d_count,1))^2);
@@ -34,8 +34,6 @@ do
 		
 		until(d_count>100)
 
-		%disp(line_e);
-		
 		%線素のそれぞれの長さを求める（１００分割なので１００個）
 		line_e_d(1,1)=sqrt((line_e(1,1))^2+(line_e(1,2))^2);
 
@@ -104,7 +102,6 @@ do
 			d_count=d_count+1;
 
 		until(d_count==101)
-		%line_e_dはd_sでも問題ない？
 		e_l=2*sum(d_l(:,1));
 		%半翼分しか算出していないので二倍
 		printf("上半角を考慮した時の揚力（N）=%f\n",e_l);
@@ -160,9 +157,8 @@ do
 			
 			until(d_count>100)
 
-
 			d_count=1;
-
+			
 			%線素の端点のｚ座標を求める（原点なし）
 			do
 				line_e(d_count,2)=alpha*((line_e(d_count,1))^2);
@@ -236,6 +232,7 @@ do
 					ydd_ij(i,j)=(line_e_cp(i,1)+line_e_cp(j,1))*cos(line_e_ang(j,1))-(line_e_cp(i,2)-line_e_cp(j,2))*sin(line_e_ang(j,1));
 					zdd_ij(i,j)=(line_e_cp(i,1)+line_e_cp(j,1))*sin(line_e_ang(j,1))-(line_e_cp(i,2)-line_e_cp(j,2))*cos(line_e_ang(j,1));
 				endfor
+				%printf("%d/100\n",i);
 			endfor
 
 			%R2_ijとかを求める
@@ -256,7 +253,6 @@ do
 					Q_ij(i,j)=-1/2/pi*(((yd_ij(i,j)-line_e_d(j,1)./2)./R2_pij(i,j)-1*(yd_ij(i,j)+line_e_d(j,1)./2)./R2_mij(i,j))*cos(line_e_ang(i,1)-line_e_ang(j,1))+(zd_ij(i,j)./R2_pij(i,j)-zd_ij(i,j)./R2_mij(i,j))*sin(line_e_ang(i,1)-line_e_ang(j,1))+((ydd_ij(i,j)-line_e_d(j,1)./2)./Rd2_mij(i,j)-1*(ydd_ij(i,j)+line_e_d(j,1)./2)./Rd2_pij(i,j))*cos(line_e_ang(i,1)+line_e_ang(j,1))+(zdd_ij(i,j)./Rd2_mij(i,j)-zdd_ij(i,j)./Rd2_pij(i,j))*sin(line_e_ang(i,1)+line_e_ang(j,1)));
 				endfor
 			endfor
-			%dlmwrite( "qij.txt",Q_ij(:,1),"delimiter","***","newline","\n");
 
 			%A_ijを求める
 			disp("calculating A_ij.");
@@ -265,8 +261,6 @@ do
 					A_ij(i,j)=pi*Q_ij(i,j)*line_e_d(i,1)/2;
 				endfor
 			endfor
-
-			%dlmwrite( "aij.txt",A_ij(:,1),"delimiter","***","newline","\n");
 
 			%最適化行列を作る
 			%まずA_ijからなる一部分を作る
@@ -295,7 +289,6 @@ do
 			a=[1.0 2.0;3.0 4.0];
 
 			%確認用に行列を出力
-			%dlmwrite( "Opr.txt",Op_mat(:,1:10),"delimiter","***","newline","\n");
 
 			%本計算giを求める
 			disp("calculating g_i.");
@@ -313,7 +306,6 @@ do
 					Vn_i_d(j,i)=Q_ij(i,j)*Op_gamma(j,1)./2;
 				endfor
 				Vn_i(i,1)=sum(Vn_i_d(:,i));
-				%printf("%d/100\n",i);
 			endfor
 
 			%誘導抗力
@@ -358,21 +350,16 @@ do
 		disp("これより本計算です");
 		w_div_c=input("主翼分割数=");
 		div_c=w_div_c;
-		% we_div=w_div_c*dw_divn;%主翼平面部分割数
 
 		for i=1:w_div_c
 			disp(i);
 			divw_span(i,1)=input("分割翼長さ(m)=");
-			% dw_divn(i,1)=ceil(divw_span(i,1)/0.05)%0.05m近くで分割できるようにいいかんじに
-
 		endfor
 		we_div=w_div_c*dw_divn;%主翼平面部分割数
 
 		span=sum(divw_span(:,1))*2
 
 		h_span=span/2;
-		% d_s=h_span/we_div/2
-		%使うのやめたよ
 		for i=1:w_div_c
 			d_s(i,1)=divw_span(i,1)./dw_divn;
 		endfor
@@ -397,19 +384,12 @@ do
 				endfor
 			endfor
 			%分割翼ごとに分割幅が異なる
-
 			%test=rows(line_e)
 
 			d_count=1;
-
-			%line_e(1,2)=alpha*((line_e(1,1))^2);
-
-			%disp(line_e(1,:));
 			
 			%線素の端点のｚ座標を求める（原点なし）
 			line_e(:,2)=alpha.*((line_e(:,1)).^2);
-
-			%disp(line_e);
 			
 			%線素のそれぞれの長さを求める
 			line_e_d(1,1)=sqrt((line_e(1,1))^2+(line_e(1,2))^2);
@@ -421,10 +401,6 @@ do
 				d_count=d_count+1;
 			
 			until(d_count>we_div)
-
-			%disp(line_e_d);
-
-			%test2=rows(line_e_d)
 			
 			printf("正規最大たわみ(m)=%f\n",line_e(we_div,2));
 			sign=input("ok:1 return:0 ---");
@@ -441,8 +417,6 @@ do
 			d_count=d_count+1;
 			
 		until(d_count==we_div+1)
-		%dlmwrite( "y.txt",line_e_cp(:,1),"delimiter","***","newline","\n");
-		%dlmwrite( "z.txt",line_e_cp(:,2),"delimiter","***","newline","\n");
 
 		%各線素における局所上半角（ラジアン）を求める
 		line_e_ang(1,1)=atan(line_e(1,2)/line_e(1,1));
@@ -452,7 +426,6 @@ do
 			d_count=d_count+1;
 
 		until(d_count==we_div+1)
-		%dlmwrite( "ang.txt",line_e_ang(:,1),"delimiter","***","newline","\n");
 		
 		%ここからウイングレット作成部
 		%ウイングレットを作成する
@@ -557,10 +530,7 @@ do
 				ydd_ij(i,j)=(line_e_cp(i,1)+line_e_cp(j,1))*cos(line_e_ang(j,1))-(line_e_cp(i,2)-line_e_cp(j,2))*sin(line_e_ang(j,1));
 				zdd_ij(i,j)=(line_e_cp(i,1)+line_e_cp(j,1))*sin(line_e_ang(j,1))-(line_e_cp(i,2)-line_e_cp(j,2))*cos(line_e_ang(j,1));
 			endfor
-			%printf("%d/100\n",i);
 		endfor
-		%dlmwrite( "ydij.txt",yd_ij(:,1),"delimiter","***","newline","\n");
-		%dlmwrite( "zdij.txt",zd_ij(:,1),"delimiter","***","newline","\n");
 
 		%R2_ijとかを求める
 		disp("calculating R2_ij.");
@@ -571,9 +541,7 @@ do
 				Rd2_pij(i,j)=(ydd_ij(i,j)+line_e_d(j,1)/2)^2+(zdd_ij(i,j))^2;
 				Rd2_mij(i,j)=(ydd_ij(i,j)-line_e_d(j,1)/2)^2+(zdd_ij(i,j))^2;
 			endfor
-			%printf("%d/100\n",i)
 		endfor
-		%dlmwrite( "r2pij.txt",R2_pij(:,1),"delimiter","***","newline","\n");
 
 		%Q_ijを求める
 		disp("calculating Q_ij.");
@@ -582,7 +550,6 @@ do
 				Q_ij(i,j)=-1/2/pi*(((yd_ij(i,j)-line_e_d(j,1)./2)./R2_pij(i,j)-1*(yd_ij(i,j)+line_e_d(j,1)./2)./R2_mij(i,j))*cos(line_e_ang(i,1)-line_e_ang(j,1))+(zd_ij(i,j)./R2_pij(i,j)-zd_ij(i,j)./R2_mij(i,j))*sin(line_e_ang(i,1)-line_e_ang(j,1))+((ydd_ij(i,j)-line_e_d(j,1)./2)./Rd2_mij(i,j)-1*(ydd_ij(i,j)+line_e_d(j,1)./2)./Rd2_pij(i,j))*cos(line_e_ang(i,1)+line_e_ang(j,1))+(zdd_ij(i,j)./Rd2_mij(i,j)-zdd_ij(i,j)./Rd2_pij(i,j))*sin(line_e_ang(i,1)+line_e_ang(j,1)));
 			endfor
 		endfor
-		%dlmwrite( "qij.txt",Q_ij(:,1),"delimiter","***","newline","\n");
 
 		%A_ijを求める
 		disp("calculating A_ij.");
@@ -591,8 +558,6 @@ do
 				A_ij(i,j)=pi*Q_ij(i,j)*line_e_d(i,1)/2;
 			endfor
 		endfor
-
-		%dlmwrite( "aij.txt",A_ij(:,1),"delimiter","***","newline","\n");
 
 		%最適化行列を作る
 		%まずA_ijからなる一部分を作る
@@ -621,7 +586,6 @@ do
 		a=[1.0 2.0;3.0 4.0];
 
 		%確認用に行列を出力
-		%dlmwrite( "Opr.txt",Op_mat(:,1:10),"delimiter","***","newline","\n");
 
 		%本計算giを求める
 		disp("calculating g_i.");
@@ -640,7 +604,6 @@ do
 				Vn_i_d(j,i)=Q_ij(i,j)*Op_gamma(j,1)./2;
 			endfor
 			Vn_i(i,1)=sum(Vn_i_d(:,i));
-			%printf("%d/100\n",i);
 		endfor
 
 		%誘導角度
@@ -674,7 +637,6 @@ do
 		for i=(we_div-1):-1:1
 			Q(i,1)=Q(i+1,1)+d_l(i,1);
 		endfor
-		%dlmwrite( "Q.txt",Q(:,1),"delimiter","***","newline","\n");
 
 		if(wl_span>0)
 			%ウイングレット部のせん断力を求める
@@ -690,7 +652,6 @@ do
 		for i=(we_div-1):-1:1
 			d_m(i,1)=(Q(i,1)+Q(i+1))*line_e_d(i,1)/2*1000;
 		endfor
-		%dlmwrite( "dM.txt",d_m(:,1),"delimiter","***","newline","\n");
 		
 		if(wl_span>0)
 			%ウイングレット部の局所モーメントを求める
@@ -704,7 +665,6 @@ do
 			for i=(we_div-1+wld_c):-1:we_div+1
 				M(i,1)=M(i+1,1)+d_m(i,1);
 			endfor
-			%M(we_div+1,1)が翼端にかかると考えられるモーメント荷重
 		endif
 
 		if(wl_span==0)	
@@ -718,7 +678,6 @@ do
 			M(i,1)=M(i+1,1)+d_m(i,1);
 		endfor
 		%M(1,1)が翼根部曲げモーメント
-		%dlmwrite( "M.txt",M(:,1),"delimiter","***","newline","\n");
 
 		%揚力計算
 		disp("calculating L.");
@@ -788,7 +747,6 @@ do
 			Hex_Vn_i_d(j,i)=Q_ij(i,j)*Hex_gamma(j,1)./2;
 		endfor
 		Hex_Vn_i(i,1)=sum(Hex_Vn_i_d(:,i));
-		%printf("%d/100\n",i);
 	endfor
 
 	%誘導角度
@@ -830,10 +788,7 @@ do
 
 	ed_Hex_Vn_i(1:dw_divn,1)=ed_Hex_Vn_i(dw_divn+1,1);
 
-	% poly_wl=polyfit(nang_cp(we_div+1:we_div+wld_c,1),Hex_Vn_i(we_div+1:we_div+wld_c,1),1);
-
 	for i=we_div+1:we_div+wld_c
-		% ed_Hex_Vn_i(i,1)=poly_wl(1).*nang_line(i,1).+poly_wl(2);
 		ed_Hex_Vn_i(i,1)=ed_Hex_Vn_i(we_div,1);
 
 	endfor
@@ -877,13 +832,7 @@ do
 			ylabel('gamma');
 			xlim([0,span/2+wl_span+1]);
 			grid on;
-		
-		% subplot(2,1,2);
-		% 	plot(nang_cp(:,1),di_d(:,1),"-",nang_cp(:,1),Hex_di_d(:,1),"-");
-		% 	xlabel('y[m]');
-		% 	ylabel('Di');
-		% 	xlim([0,span/2+wl_span+1]);
-		% 	grid on;
+			
 	cd("design_data")
 	cd(pj_name)
 	print("Di_gamma.png","-dpng","-r100")
