@@ -25,13 +25,7 @@ do
 		
 		until(d_count>100)
 
-		%test=rows(line_e)
-
 		d_count=1;
-
-		%line_e(1,2)=alpha*((line_e(1,1))^2);
-
-		%disp(line_e(1,:));
 		
 		%線素の端点のｚ座標を求める（原点なし）
 		do
@@ -52,10 +46,6 @@ do
 			d_count=d_count+1;
 		
 		until(d_count>100)
-
-		%disp(line_e_d);
-
-		%test2=rows(line_e_d)
 		
 		printf("正規最大たわみ(m)=%f\n",line_e(100,2));
 		sign=input("ok:1 return:0 ---");
@@ -170,22 +160,15 @@ do
 			
 			until(d_count>100)
 
-			%test=rows(line_e)
 
 			d_count=1;
 
-			%line_e(1,2)=alpha*((line_e(1,1))^2);
-
-			%disp(line_e(1,:));
-			
 			%線素の端点のｚ座標を求める（原点なし）
 			do
 				line_e(d_count,2)=alpha*((line_e(d_count,1))^2);
 				d_count=d_count+1;
 			
 			until(d_count>100)
-
-			%disp(line_e);
 			
 			%線素のそれぞれの長さを求める（１００分割なので１００個）
 			line_e_d(1,1)=sqrt((line_e(1,1))^2+(line_e(1,2))^2);
@@ -198,10 +181,6 @@ do
 			
 			until(d_count>100)
 
-			%disp(line_e_d);
-
-			%test2=rows(line_e_d)
-
 			%コントロールポイント（上半角を考慮した時）の座標を求める
 			line_e_cp(1,1)=line_e(1,1)/2;
 			line_e_cp(1,2)=line_e(1,2)/2;
@@ -212,8 +191,6 @@ do
 				d_count=d_count+1;
 				
 			until(d_count==101)
-			%dlmwrite( "y.txt",line_e_cp(:,1),"delimiter","***","newline","\n");
-			%dlmwrite( "z.txt",line_e_cp(:,2),"delimiter","***","newline","\n");
 
 			%各線素における局所上半角（ラジアン）を求める
 			line_e_ang(1,1)=atan(line_e(1,2)/line_e(1,1));
@@ -223,7 +200,6 @@ do
 				d_count=d_count+1;
 
 			until(d_count==101)
-			%dlmwrite( "ang.txt",line_e_ang(:,1),"delimiter","***","newline","\n");
 
 			%上半角を考慮しなかった時のCP（のy座標のみ）を求める
 			d_count=1;
@@ -260,10 +236,7 @@ do
 					ydd_ij(i,j)=(line_e_cp(i,1)+line_e_cp(j,1))*cos(line_e_ang(j,1))-(line_e_cp(i,2)-line_e_cp(j,2))*sin(line_e_ang(j,1));
 					zdd_ij(i,j)=(line_e_cp(i,1)+line_e_cp(j,1))*sin(line_e_ang(j,1))-(line_e_cp(i,2)-line_e_cp(j,2))*cos(line_e_ang(j,1));
 				endfor
-				%printf("%d/100\n",i);
 			endfor
-			%dlmwrite( "ydij.txt",yd_ij(:,1),"delimiter","***","newline","\n");
-			%dlmwrite( "zdij.txt",zd_ij(:,1),"delimiter","***","newline","\n");
 
 			%R2_ijとかを求める
 			disp("calculating R2_ij.");
@@ -274,9 +247,7 @@ do
 					Rd2_pij(i,j)=(ydd_ij(i,j)+d_s)^2+(zdd_ij(i,j))^2;
 					Rd2_mij(i,j)=(ydd_ij(i,j)-d_s)^2+(zdd_ij(i,j))^2;
 				endfor
-				%printf("%d/100\n",i)
 			endfor
-			%dlmwrite( "r2pij.txt",R2_pij(:,1),"delimiter","***","newline","\n");
 
 			%Q_ijを求める
 			disp("calculating Q_ij.");
